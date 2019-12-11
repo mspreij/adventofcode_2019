@@ -9,12 +9,13 @@ $data = trim(file_get_contents('7.txt'));
 
 try {
     foreach(permutations([0, 1, 2, 3, 4]) as $phase_sequence) {
-        $output = 0;
+        $input = 0;
         foreach ($phase_sequence as $phase) {
-            $c->init($data, [$phase, $output]);
+            $c->init($data, [$phase, $input]);
             $output = $c->run();
+            $input = $output[0];
         }
-        $out[] = $output[0];
+        $out[] = $input;
     }
 } catch (Exception $e) {
     echo $e->getMessage();
