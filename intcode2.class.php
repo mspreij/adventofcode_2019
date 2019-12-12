@@ -213,6 +213,7 @@ class Intcode2
                 $value_1 = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
                 $value_2 = $this->get_memory_value($this->instruction_pointer+2, $p_modes[1]);
                 $output_address = $this->memory[$this->instruction_pointer+3];
+                if ($p_modes[2] == 2) $output_address += $this->relative_base;
                 $this->memory[$output_address] = $value_1 + $value_2;
                 $this->debug("instr addition(1), val 1: $value_1, val 2: $value_2, output $output_address");
                 $this->instruction_pointer += 4;
@@ -224,6 +225,7 @@ class Intcode2
                 $value_1 = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
                 $value_2 = $this->get_memory_value($this->instruction_pointer+2, $p_modes[1]);
                 $output_address = $this->memory[$this->instruction_pointer+3];
+                if ($p_modes[2] == 2) $output_address += $this->relative_base;
                 $this->memory[$output_address] = $value_1 * $value_2;
                 $this->debug("instr times(2), val 1: $value_1, val 2: $value_2, output $output_address");
                 $this->instruction_pointer += 4;
@@ -231,9 +233,11 @@ class Intcode2
             
             // get input
             3 => function() {
+                $p_modes = $this->get_p_modes();
                 $input = $this->get_input();
-                // no parameter modes for only writing
-                $output_address = $this->memory[$this->instruction_pointer+1];
+                $output_address = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
+                // if ($p_modes[0] == 2) $output_address += $this->relative_base; ^ same?
+                // $output_address = $this->memory[$this->instruction_pointer+1];
                 $this->memory[$output_address] = $input;
                 $this->debug("instr input(3), val: $input, output address: $output_address");
                 $this->instruction_pointer += 2;
@@ -249,8 +253,7 @@ class Intcode2
             },
             
             // is not zero
-            5 => function()
-            {
+            5 => function() {
                 $p_modes = $this->get_p_modes();
                 $value_1 = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
                 if ($value_1 != 0) {
@@ -258,12 +261,11 @@ class Intcode2
                 }else{
                     $this->instruction_pointer += 3;
                 }
-                $this->debug("instr is_not_zero(5), val: $value_1, next pointer: $this->instruction_pointer");
+                $this->debug("instr jump_if_true(5), val: $value_1, next pointer: $this->instruction_pointer");
             },
             
             // is zero
-            6 => function()
-            {
+            6 => function() {
                 $p_modes = $this->get_p_modes();
                 $value_1 = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
                 if ($value_1 == 0) {
@@ -271,7 +273,7 @@ class Intcode2
                 }else{
                     $this->instruction_pointer += 3;
                 }
-                $this->debug("instr is_zero(6), val: $value_1, next pointer: $this->instruction_pointer");
+                $this->debug("instr jump_if_false(6), val: $value_1, next pointer: $this->instruction_pointer");
             },
             
             // less then
@@ -279,8 +281,9 @@ class Intcode2
                 $p_modes = $this->get_p_modes();
                 $value_1 = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
                 $value_2 = $this->get_memory_value($this->instruction_pointer+2, $p_modes[1]);
-                if ($p_modes[2] != 0) throw new Exception("instruction less_than: parameter 3 mode should be 0!!!", 1);
+                // if ($p_modes[2] != 0) throw new Exception("instruction less_than: parameter 3 mode should be 0!!!", 1);
                 $output_address = $this->memory[$this->instruction_pointer+3];
+                if ($p_modes[2] == 2) $output_address += $this->relative_base;
                 $this->debug("instr less_then(7), val 1: $value_1, val 2: $value_2, output $output_address");
                 $this->set_memory_value($output_address, (int) ($value_1 < $value_2));
                 $this->instruction_pointer += 4;
@@ -291,8 +294,9 @@ class Intcode2
                 $p_modes = $this->get_p_modes();
                 $value_1 = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
                 $value_2 = $this->get_memory_value($this->instruction_pointer+2, $p_modes[1]);
-                if ($p_modes[2] != 0) throw new Exception("instruction equals: parameter 3 mode should be 0!!!", 1);
+                // if ($p_modes[2] != 0) throw new Exception("instruction equals: parameter 3 mode should be 0!!!", 1);
                 $output_address = $this->memory[$this->instruction_pointer+3];
+                if ($p_modes[2] == 2) $output_address += $this->relative_base;
                 $this->debug("instr equals(8), val 1: $value_1, val 2: $value_2, output $output_address");
                 $this->set_memory_value($output_address, (int) ($value_1 == $value_2));
                 $this->instruction_pointer += 4;
