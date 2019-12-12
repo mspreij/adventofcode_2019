@@ -16,12 +16,11 @@ $c->load_data($data);
 
 $c->store_input(1);
 $c->run();
-var_export($c->output);
-
 
 $output = $c->output;
 
-echo 'Output: '.var_export($output, 1);
+if (strlen($data) < 100) echo "\n\nData:   $data\n";
+echo 'Output: '.join(',', $output);
 
 
 ?>
