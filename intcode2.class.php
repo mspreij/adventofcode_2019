@@ -257,11 +257,12 @@ class Intcode2
                 $p_modes = $this->get_p_modes();
                 $value_1 = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
                 if ($value_1 != 0) {
-                    $this->instruction_pointer = $this->get_memory_value($this->instruction_pointer+2, $p_modes[1]);
+                    $next_pointer = $this->get_memory_value($this->instruction_pointer+2, $p_modes[1]);
                 }else{
-                    $this->instruction_pointer += 3;
+                    $next_pointer = $this->instruction_pointer + 3;
                 }
-                $this->debug("instr jump_if_true(5), val: $value_1, next pointer: $this->instruction_pointer");
+                $this->debug("instr <r>jump_if_true(5)</r>, val: $value_1, next pointer: $next_pointer");
+                $this->instruction_pointer = $next_pointer;
             },
             
             // is zero
