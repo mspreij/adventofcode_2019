@@ -1,0 +1,10 @@
+
+- clear debug log before run, unless multiple computers?
+  - log dir, with named logs?
+- collect log output in array, write to disk every 1000 lines or so, should speed up the debugging runs..
+  - what to do with the <r> tags?
+    - take them out for _text_ logs
+    - or add more and view logs with browser (hrmmmm)
+    - or write a log viewer that can page through 100 MB files and parses + highlights the lines?
+- run the tests from that one reddit post
+  - take another good look at variable names for instr 3 & get_memory_value
