@@ -1,4 +1,5 @@
 <style>
+    /* this made logging out put prettier */
     r {color: red;}
 </style>
 <pre><?php

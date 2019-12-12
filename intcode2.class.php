@@ -324,7 +324,12 @@ class Intcode2
     protected function debug($msg)
     {
         if (! $this->debug) return;
-        file_put_contents('debug.log', '['.microtime()."] $this->name - address $this->instruction_pointer: {$this->memory[$this->instruction_pointer]} > $msg\n", FILE_APPEND);
+        static $cache = [];
+        $cache[] = '['.microtime()."] $this->name - address $this->instruction_pointer: {$this->memory[$this->instruction_pointer]} > $msg";
+        if (count($cache) == 1000) {
+            file_put_contents('debug.log', join("\n", $cache), FILE_APPEND);
+            $cache = [];
+        }
     }
     
 }
