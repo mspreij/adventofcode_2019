@@ -215,7 +215,7 @@ class Intcode2
                 $output_address = $this->memory[$this->instruction_pointer+3];
                 if ($p_modes[2] == 2) $output_address += $this->relative_base;
                 $this->memory[$output_address] = $value_1 + $value_2;
-                $this->debug("instr addition(1), val 1: $value_1, val 2: $value_2, output $output_address");
+                $this->debug("instr <r>addition(1)</r>, val 1: $value_1, val 2: $value_2, output $output_address");
                 $this->instruction_pointer += 4;
             },
             
@@ -227,7 +227,7 @@ class Intcode2
                 $output_address = $this->memory[$this->instruction_pointer+3];
                 if ($p_modes[2] == 2) $output_address += $this->relative_base;
                 $this->memory[$output_address] = $value_1 * $value_2;
-                $this->debug("instr times(2), val 1: $value_1, val 2: $value_2, output $output_address");
+                $this->debug("instr <r>times(2)</r>, val 1: $value_1, val 2: $value_2, output $output_address");
                 $this->instruction_pointer += 4;
             },
             
@@ -239,7 +239,7 @@ class Intcode2
                 // if ($p_modes[0] == 2) $output_address += $this->relative_base; ^ same?
                 // $output_address = $this->memory[$this->instruction_pointer+1];
                 $this->memory[$output_address] = $input;
-                $this->debug("instr input(3), val: $input, output address: $output_address");
+                $this->debug("instr <r>input(3)</r>, val: $input, output address: $output_address");
                 $this->instruction_pointer += 2;
             },
             
@@ -247,7 +247,7 @@ class Intcode2
             4 => function() {
                 $p_modes = $this->get_p_modes();
                 $value = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
-                $this->debug("instr output(4), val: $value");
+                $this->debug("instr <r>output(4)</r>, val: $value");
                 $this->instruction_pointer += 2;
                 $this->send_output($value);
             },
@@ -273,7 +273,7 @@ class Intcode2
                 }else{
                     $this->instruction_pointer += 3;
                 }
-                $this->debug("instr jump_if_false(6), val: $value_1, next pointer: $this->instruction_pointer");
+                $this->debug("instr <r>jump_if_false(6)</r>, val: $value_1, next pointer: $this->instruction_pointer");
             },
             
             // less then
@@ -284,7 +284,7 @@ class Intcode2
                 // if ($p_modes[2] != 0) throw new Exception("instruction less_than: parameter 3 mode should be 0!!!", 1);
                 $output_address = $this->memory[$this->instruction_pointer+3];
                 if ($p_modes[2] == 2) $output_address += $this->relative_base;
-                $this->debug("instr less_then(7), val 1: $value_1, val 2: $value_2, output $output_address");
+                $this->debug("instr <r>less_then(7)</r>, val 1: $value_1, val 2: $value_2, output $output_address");
                 $this->set_memory_value($output_address, (int) ($value_1 < $value_2));
                 $this->instruction_pointer += 4;
             },
@@ -297,7 +297,7 @@ class Intcode2
                 // if ($p_modes[2] != 0) throw new Exception("instruction equals: parameter 3 mode should be 0!!!", 1);
                 $output_address = $this->memory[$this->instruction_pointer+3];
                 if ($p_modes[2] == 2) $output_address += $this->relative_base;
-                $this->debug("instr equals(8), val 1: $value_1, val 2: $value_2, output $output_address");
+                $this->debug("instr <r>equals(8)</r>, val 1: $value_1, val 2: $value_2, output $output_address");
                 $this->set_memory_value($output_address, (int) ($value_1 == $value_2));
                 $this->instruction_pointer += 4;
             },
@@ -308,7 +308,7 @@ class Intcode2
                 $input = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
                 // $input = $this->memory[$this->instruction_pointer+1];
                 $this->relative_base += $input;
-                $this->debug("instr adjust rel_base(9), val: $input, new relative base: $this->relative_base");
+                $this->debug("instr <r>adjust rel_base(9)</r>, val: $input, new relative base: $this->relative_base");
                 $this->instruction_pointer += 2;
             },
             
