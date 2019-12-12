@@ -235,9 +235,9 @@ class Intcode2
             3 => function() {
                 $p_modes = $this->get_p_modes();
                 $input = $this->get_input();
-                $output_address = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
-                // if ($p_modes[0] == 2) $output_address += $this->relative_base; ^ same?
-                // $output_address = $this->memory[$this->instruction_pointer+1];
+                // $output_address = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
+                $output_address = $this->memory[$this->instruction_pointer+1];
+                if ($p_modes[0] == 2) $output_address += $this->relative_base; // ^ same?
                 $this->memory[$output_address] = $input;
                 $this->debug("instr <r>input(3)</r>, val: $input, output address: $output_address");
                 $this->instruction_pointer += 2;
@@ -325,7 +325,7 @@ class Intcode2
     protected function debug($msg)
     {
         if (! $this->debug) return;
-        echo '['.microtime()."] $this->name - address $this->instruction_pointer: {$this->memory[$this->instruction_pointer]} > $msg\n";
+        file_put_contents('debug.log', '['.microtime()."] $this->name - address $this->instruction_pointer: {$this->memory[$this->instruction_pointer]} > $msg\n", FILE_APPEND);
     }
     
 }
