@@ -1,3 +1,6 @@
+<style>
+    r {color: red;}
+</style>
 <pre><?php
 require_once 'lib.php';
 require_once 'intcode2.class.php';
