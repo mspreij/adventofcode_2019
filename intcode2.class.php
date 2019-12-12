@@ -36,6 +36,7 @@ class Intcode2
     public $status = 'init';
     public $status_list = ['init', 'running', 'waiting', 'halt'];
     public $output_target;
+    protected $relative_base = 0; // https://adventofcode.com/2019/day/9
     protected $instructions = [];
     
     public $debug = 0;
@@ -116,8 +117,24 @@ class Intcode2
     public function get_memory_value($address, $mode=0)
     {
         $value = $this->memory[$address];
-        if ($mode === 1) return $value; // mode 1: immediate mode
-        return $this->memory[$value]; // mode 0: positional mode
+        switch ($mode) {
+            case 0:
+                // mode 0: positional mode
+                return isset($this->memory[$value]) ? $this->memory[$value] : 0;
+                break;
+            case 1:
+                // mode 1: immediate mode
+                return $value;
+                break;
+            case 2:
+                // mode 2: relative mode
+                $index = $value + $this->relative_base;
+                return isset($this->memory[$index]) ? $this->memory[$index] : 0;
+                break;
+            default:
+                // mode wtf: wtf mode?
+                throw new Exception("get_memory_value: wtf kind of mode is ".var_export($mode, 1).'?', 1);
+        }
     }
     
     // --- parameter modes ---
@@ -279,6 +296,16 @@ class Intcode2
                 $this->debug("instr equals(8), val 1: $value_1, val 2: $value_2, output $output_address");
                 $this->set_memory_value($output_address, (int) ($value_1 == $value_2));
                 $this->instruction_pointer += 4;
+            },
+            
+            // adjust relative base
+            9 => function() {
+                $p_modes = $this->get_p_modes();
+                $input = $this->get_memory_value($this->instruction_pointer+1, $p_modes[0]);
+                // $input = $this->memory[$this->instruction_pointer+1];
+                $this->relative_base += $input;
+                $this->debug("instr adjust rel_base(9), val: $input, new relative base: $this->relative_base");
+                $this->instruction_pointer += 2;
             },
             
             // halt
