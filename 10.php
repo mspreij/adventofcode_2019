@@ -22,14 +22,19 @@ foreach (explode("\n", $input) as $y => $line) {
 }
 /*
 
+Objective: find asteroid which can see the most other asteroids. When 3 asteroids are exactly on the same line (any angle), the first can't see the last.
+
+How to get there: find the number of asteroids each asteroid can see.
+Give an asteroid a "sees" array which stores other asteroids, and a "blocked" array which stores coordinates to ignore.
+
 Notes:
-- if it turns out A can see B, B can see A, store that in B's >sees list too.
+- if it turns out A can see B, B can see A. Store that in B's >sees list too while scoring A.
 - therefore you can get away with only checking the asteroids 'south' of the current one, if going from north to south (and on its own line, only east is interesting)
 - an asteroid at [x,y] can see all asteroids on [x-1,y], [x+1,y], [x,y-1] and [x,y+1]. not sure this is really useful /yet/.
 
 So.
-- run through each asteroid ($ast) from north to south:
-  - first on its own line ($y), the first on $x+ it can see, add that (and add A to its >sees), then the rest is blocked and can be ignored
+- run through each asteroid ($ast[]) from north to south:
+  - on its own line ($y), the first on $x+ it can see, add that (and add A to its >sees), then the rest is blocked and can be ignored
   - check all the asteroids below them, line by line:
     - when going through the x's on a line, Skip the ones in A->blocked. this can be true for the second and lower lines under A.
     - "A? if there is an asteroid in the checked line, YOU CAN SEE IT."
