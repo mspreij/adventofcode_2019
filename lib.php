@@ -1,14 +1,13 @@
 <?php
+
 /**
- * Returns time in seconds at first call, and on every next call, the passed time since last call.
+ * time_taken($tally=0, $precision=5)
+ * 
+ * Returns time in seconds.fraction at first call, and on every next call, the passed time since last call.
  * If $tally is 1, it also returns the total time passed since the first call, and optionally
  *   the passed time since last tally.
+ * replace the <br> by a \n for logfile usage
 **/
-
-// replace the <br> by a \n for logfile usage
-
-//_____________________________________
-// time_taken($tally=0, $precision=5) /
 function time_taken($tally=0, $precision=5) {
   static $start = 0; // first call
   static $notch = 0; // tally calls
@@ -30,6 +29,7 @@ function time_taken($tally=0, $precision=5) {
   return $out;
 }
 
+
 function permutations(array $elements)
 {
     if (count($elements) <= 1) {
@@ -47,3 +47,37 @@ function permutations(array $elements)
     }
 }
 
+// this was hacked together drunkenly, maybe it could be shorter, but it works. it seems to work.
+function prime_factors(int $x)
+{
+    if ($x < 4) return [$x];
+    $sqrt = floor(sqrt($x));
+    $i=2;
+    $factors = [];
+    while ($i <= $sqrt) {
+        $a = $x / $i;
+        if (is_int($a)) {
+            $factors[] = $i;
+            $x = $a;
+        }else{
+            if ($i >= $sqrt and $x != 1) $factors[] = $x;
+            $i++;
+        }
+    }
+    return $factors;
+}
+
+function reduce_fraction(int $x, int $y)
+{
+    $x_factors = prime_factors(abs($x));
+    $y_factors = prime_factors(abs($y));
+    foreach ($x_factors as $k => $factor) {
+        if (! in_array($factor, $y_factors)) {
+            unset($x_factors[$k]);
+        }else{
+            unset($y_factors[array_search($factor, $y_factors)]);
+        }
+    }
+    $gcd = array_product($x_factors); // greatest common divisor
+    return [$x/$gcd, $y/$gcd];
+}
