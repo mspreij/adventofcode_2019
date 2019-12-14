@@ -4,11 +4,16 @@ require_once 'lib.php';
 $input = trim(file_get_contents('10.txt'));
 
 $input =
-".#..#
-.....
-#####
-....#
-...##";
+"......#.#.
+#..#.#....
+..#######.
+.#.#.###..
+.#..#.....
+..#....#.#
+#..#....#.
+.##.#..###
+##...#..#.
+.#....####";
 
 foreach (explode("\n", $input) as $y => $line) {
     foreach (str_split($line) as $x => $char) {
@@ -16,9 +21,17 @@ foreach (explode("\n", $input) as $y => $line) {
         $grid[$y][$x] = $char;
         // make a list of asteroids anyway, we'll probably need those
         if ($char === '#') {
-            $asteroids["$x:$y"] = ['sees'=>[], 'blocked'=>[]];
+            $asteroids["$x:$y"] = new Asteroid;
         }
     }
+}
+
+class Asteroid
+{
+    
+    public $sees = [];
+    public $blocked = [];
+    
 }
 
 
@@ -31,8 +44,8 @@ foreach ($asteroids as $Ast_key => $Ast) {
     $nx = $x + 1;
     while ($nx < $width) {
         if ($grid[$y][$nx] === '#') {
-            $Ast['sees'][] = "$nx:$y"; // add that to sees
-            $asteroids["$nx:$y"]['sees'][] = $Ast_key; // and add A to its >sees
+            $Ast->sees[] = "$nx:$y"; // add that to sees
+            $asteroids["$nx:$y"]->sees[] = $Ast_key; // and add A to its >sees
             break; // then the rest is blocked and can be ignored
         }
         $nx++;
@@ -40,16 +53,21 @@ foreach ($asteroids as $Ast_key => $Ast) {
     // check all the asteroids below them, line by line:
     foreach (array_slice($grid, $y+1, null, true) as $cy => $row) {
         foreach ($row as $cx => $char) {
-            if (isset($Ast['blocked']["$cx:$cy"])) continue; // when going through the x's on a line, Skip the ones in A->blocked
+            if (isset($Ast->blocked["$cx:$cy"])) continue; // when going through the x's on a line, Skip the ones in A->blocked
             if ($char === '#') {                           // if there is an asteroid in the checked line, you can see it!
-                $Ast['sees'][] = "$cx:$cy";                 // Add it to A->sees
-                $asteroids["$cx:$cy"]['sees'][] = $Ast_key; // add yourself to its >sees
+                $Ast->sees[] = "$cx:$cy";                 // Add it to A->sees
+                $asteroids["$cx:$cy"]->sees[] = $Ast_key; // add yourself to its >sees
                 // now find the blind spots behind that asteroid, and block them off
                 list($dx, $dy) = reduce_fraction($cx - $x, $cy - $y);
+                if ($dx == 0) $dy = 1;
+                if ($dy == 0) $dx = 1;
+                if ($Ast_key == '4:0') {
+                    // echo "$cx:$cy $cx, $x, $dx, $dy :";
+                }
                 $nx = $cx + $dx;
                 $ny = $cy + $dy;
                 while($nx >= 0 and $nx < $width && $ny >= 0 and $ny < $height) {
-                    $Ast['blocked']["$nx:$ny"] = 1;
+                    $Ast->blocked["$nx:$ny"] = 1;
                     $nx += $dx;
                     $ny += $dy;
                 }
@@ -59,16 +77,16 @@ foreach ($asteroids as $Ast_key => $Ast) {
     $asteroids[$Ast_key] = $Ast;
 }
 
-var_export($asteroids);die();
+// var_export($asteroids);die();
 $max = 0;
 foreach ($asteroids as $key => $ast) {
-    $c = count($ast['sees']);
+    $c = count($ast->sees);
     if ($c > $max) {
         $high = $key;
         $max = $c;
     }
 }
-var_export($key);
+var_export($high);
 
 /*
 
