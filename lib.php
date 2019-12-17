@@ -81,3 +81,40 @@ function reduce_fraction(int $x, int $y)
     $gcd = array_product($x_factors); // greatest common divisor
     return [$x/$gcd, $y/$gcd];
 }
+
+// returns degrees (yeah I know) from a line that would go from 0,0 to x,y
+// degrees go from 0 (noon o'clock) to 359.9 (almost noon)
+// I wrote this because it was past midnight and I hadn't had dinner yet and I couldn't figure out the one-liner.
+function return_degrees($x, $y)
+{
+    settype($x, 'int');
+    settype($y, 'int');
+    if ($x > 0) {
+        if($y === 0) {
+            return 90;
+        }elseif ($y > 0) {
+            $ftn = $x / $y;
+            return rad2deg(atan($ftn));
+        }else{
+            $ftn = $x / $y;
+            return 180 + rad2deg(atan($ftn));
+        }
+    }elseif ($x === 0) {
+        if ($y < 0) {
+            return 180;
+        }else{
+            return 0;
+        }
+    }elseif($x < 0) {
+        if ($y > 0) {
+            $ftn = $x / $y;
+            return 360 + rad2deg(atan($ftn));
+        }elseif($y === 0) {
+            return 270;
+        }else{
+            $ftn = $x / $y;
+            return 180 + rad2deg(atan($ftn));
+        }
+    } // beer might have been involved
+}
+
